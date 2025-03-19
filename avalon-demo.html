@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>阿瓦隆 - 桌游助手</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    body {
+      background-color: #1a2b6d;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 414px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .title {
+      font-size: 36px;
+      color: #ffd700;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #ffffff;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background-color: #2a3b7d;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn {
+      background-color: #ffd700;
+      color: #1a2b6d;
+      border: none;
+      border-radius: 8px;
+      padding: 15px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #ffcc00;
+      transform: translateY(-2px);
+    }
+
+    .btn-icon {
+      margin-right: 10px;
+      font-size: 24px;
+    }
+
+    .btn-arrow {
+      margin-left: auto;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .feature-item {
+      background-color: #2a3b7d;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .feature-item:hover {
+      background-color: #344590;
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      color: #4e7fff;
+      margin-bottom: 10px;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: #aabbff;
+    }
+
+    .player-count {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: #344590;
+      outline: none;
+      margin: 15px 0;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #ffd700;
+      cursor: pointer;
+    }
+
+    .slider-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffd700;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .role-settings {
+      margin-bottom: 20px;
+    }
+
+    .role-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .role-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .role-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      color: #4e7fff;
+    }
+
+    .role-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    .role-desc {
+      font-size: 12px;
+      color: #aabbff;
+    }
+
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #344590;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked+.toggle-slider {
+      background-color: #4e7fff;
+    }
+
+    input:checked+.toggle-slider:before {
+      transform: translateX(24px);
+    }
+
+    .role-card {
+      background-color: #2a3b7d;
+      border-radius: 12px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .role-card.evil {
+      background-color: #7d2a2a;
+      border: 2px solid #ff4e4e;
+    }
+
+    .role-card-icon {
+      width: 60px;
+      height: 60px;
+      background-color: #4e7fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      font-size: 30px;
+    }
+
+    .role-card.evil .role-card-icon {
+      background-color: #ff4e4e;
+    }
+
+    .role-card-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .role-card-type {
+      font-size: 16px;
+      padding: 5px 15px;
+      border-radius: 20px;
+      background-color: #4e7fff;
+      margin-bottom: 20px;
+    }
+
+    .role-card.evil .role-card-type {
+      background-color: #ff4e4e;
+    }
+
+    .role-card-desc {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .nav-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .nav-btn.prev {
+      background-color: #344590;
+      color: white;
+    }
+
+    .nav-btn.next {
+      background-color: #ffd700;
+      color: #1a2b6d;
+    }
+
+    .game-progress {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .progress-step {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #344590;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .progress-step.active {
+      background-color: #ffd700;
+      color: #1a2b6d;
+      border: 2px solid #ffcc00;
+    }
+
+    .progress-info {
+      font-size: 14px;
+      color: #aabbff;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .mission-card {
+      background-color: #344590;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .mission-title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .mission-icon {
+      font-size: 24px;
+      color: #ffd700;
+      margin-right: 10px;
+    }
+
+    .mission-name {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .mission-desc {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .player-selection {
+      margin-top: 20px;
+    }
+
+    .selection-title {
+      font-size: 16px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .selection-icon {
+      font-size: 20px;
+      margin-right: 10px;
+      color: #4e7fff;
+    }
+
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .player-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #4e7fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .player-avatar.selected {
+      border: 2px solid #ffd700;
+    }
+
+    .player-avatar-name {
+      font-size: 12px;
+      text-align: center;
+      margin-top: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 50px;
+    }
+
+    .footer {
+      font-size: 14px;
+      color: #aabbff;
+      text-align: center;
+      margin-top: auto;
+      padding: 20px 0;
+    }
+
+    /* 页面切换 */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 375px) {
+      .title {
+        font-size: 32px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- 主页 -->
+    <div class="page active" id="home-page">
+      <div class="header">
+        <h1 class="title">阿瓦隆</h1>
+        <p class="subtitle">揭露邪恶，保卫王国</p>
+      </div>
+
+      <button class="btn" onclick="showPage('create-game-page')">
+        创建新游戏
+        <span class="btn-arrow">›</span>
+      </button>
+
+      <div class="feature-grid">
+        <div class="feature-item" onclick="showPage('join-game-page')">
+          <div class="feature-icon">👥</div>
+          <div class="feature-title">加入游戏</div>
+          <div class="feature-desc">输入房间码</div>
+        </div>
+        <div class="feature-item" onclick="showPage('settings-page')">
+          <div class="feature-icon">⚙️</div>
+          <div class="feature-title">游戏设置</div>
+          <div class="feature-desc">自定义规则</div>
+        </div>
+        <div class="feature-item" onclick="showPage('rules-page')">
+          <div class="feature-icon">ℹ️</div>
+          <div class="feature-title">游戏规则</div>
+          <div class="feature-desc">了解玩法</div>
+        </div>
+        <div class="feature-item" onclick="showPage('history-page')">
+          <div class="feature-icon">🕒</div>
+          <div class="feature-title">游戏记录</div>
+          <div class="feature-desc">历史战绩</div>
+        </div>
+      </div>
+      <div class="footer">
+        阿瓦隆·桌游助手 v1.0
+      </div>
+    </div>
+
+    <!-- 创建游戏页面 -->
+    <div class="page" id="create-game-page">
+      <div class="header">
+        <h1 class="title">创建游戏</h1>
+      </div>
+
+      <div class="card player-count">
+        <div class="feature-title">玩家人数</div>
+        <div class="slider-container">
+          <div class="slider-labels">
+            <span>5人</span>
+            <span>10人</span>
+          </div>
+          <input type="range" min="5" max="10" value="5" class="slider" id="player-count-slider"
+            oninput="updatePlayerCount(this.value)">
+          <div class="slider-value" id="player-count-value">5人</div>
+        </div>
+      </div>
+
+      <div class="card role-settings">
+        <div class="feature-title">角色设置</div>
+
+        <div class="role-item">
+          <div class="role-info">
+            <div class="role-icon">👑</div>
+            <div>
+              <div class="role-name">梅林</div>
+              <div class="role-desc">知晓邪恶阵营</div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="role-item">
+          <div class="role-info">
+            <div class="role-icon">🛡️</div>
+            <div>
+              <div class="role-name">派西维尔</div>
+              <div class="role-desc">知晓梅林身份</div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="role-item">
+          <div class="role-info">
+            <div class="role-icon">⚔️</div>
+            <div>
+              <div class="role-name">刺客</div>
+              <div class="role-desc">可刺杀梅林</div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="role-item">
+          <div class="role-info">
+            <div class="role-icon">👑</div>
+            <div>
+              <div class="role-name">莫德雷德</div>
+              <div class="role-desc">对梅林隐身</div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="role-item">
+          <div class="role-info">
+            <div class="role-icon">🔗</div>
+            <div>
+              <div class="role-name">莫甘娜</div>
+              <div class="role-desc">伪装成梅林</div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="role-item">
+          <div class="role-info">
+            <div class="role-icon">🛡️</div>
+            <div>
+              <div class="role-name">奥伯伦</div>
+              <div class="role-desc">对邪恶阵营隐身</div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <button class="btn" onclick="showPage('room-page')">
+        创建游戏
+      </button>
+
+      <div class="nav-buttons">
+        <div class="nav-btn prev" onclick="showPage('home-page')">
+          返回
+        </div>
+      </div>
+    </div>
+
+    <!-- 加入游戏页面 -->
+    <div class="page" id="join-game-page">
+      <div class="header">
+        <h1 class="title">加入游戏</h1>
+      </div>
+
+      <div class="card">
+        <div class="feature-title">输入房间码</div>
+        <input type="text" placeholder="请输入6位房间码"
+          style="width: 100%; padding: 15px; margin: 20px 0; border-radius: 8px; border: none; font-size: 18px; text-align: center; background-color: #344590; color: white;">
+        <button class="btn" onclick="showPage('room-page')">
+          加入游戏
+        </button>
+      </div>
+
+      <div class="nav-buttons">
+        <div class="nav-btn prev" onclick="showPage('home-page')">
+          返回
+        </div>
+      </div>
+    </div>
+
+    <!-- 游戏设置页面 -->
+    <div class="page" id="settings-page">
+      <div class="header">
+        <h1 class="title">游戏设置</h1>
+      </div>
+
+      <div class="card">
+        <div class="role-item">
+          <div class="role-info">
+            <div class="role-icon">🔊</div>
+            <div>
+              <div class="role-name">音效</div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="role-item">
+          <div class="role-info">
+            <div class="role-icon">🎵</div>
+            <div>
+              <div class="role-name">背景音乐</div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="role-item">
+          <div class="role-info">
+            <div class="role-icon">📱</div>
+            <div>
+              <div class="role-name">震动反馈</div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="role-item">
+          <div class="role-info">
+            <div class="role-icon">🌙</div>
+            <div>
+              <div class="role-name">深色模式</div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <div class="nav-btn prev" onclick="showPage('home-page')">
+          返回
+        </div>
+        <div class="nav-btn next">
+          保存
+        </div>
+      </div>
+    </div>
+
+    <!-- 游戏规则页面 -->
+    <div class="page" id="rules-page">
+      <div class="header">
+        <h1 class="title">游戏规则</h1>
+      </div>
+
+      <div class="card">
+        <div class="feature-title">游戏背景</div>
+        <p style="margin-bottom: 15px; line-height: 1.5;">阿瓦隆是一款关于身份推理的桌游，玩家分为正义阵营和邪恶阵营。正义阵营需要完成任务，而邪恶阵营则试图阻止他们。</p>
+      </div>
+
+      <div class="card">
+        <div class="feature-title">游戏流程</div>
+        <ol style="margin-left: 20px; line-height: 1.5;">
+          <li style="margin-bottom: 10px;">游戏开始时，每位玩家会分配到一个角色，分属正义或邪恶阵营</li>
+          <li style="margin-bottom: 10px;">游戏共进行5轮任务，每轮由一名队长选择队员执行任务</li>
+          <li style="margin-bottom: 10px;">所有玩家对队长的选择进行投票，若多数同意则任务开始</li>
+          <li style="margin-bottom: 10px;">被选中的队员秘密投票决定任务成功或失败</li>
+          <li style="margin-bottom: 10px;">正义阵营需要成功完成3个任务获胜，邪恶阵营需要使3个任务失败获胜</li>
+          <li>若正义阵营完成3个任务，邪恶阵营的刺客有一次机会刺杀梅林，若成功则邪恶阵营获胜</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <div class="feature-title">角色介绍</div>
+        <div style="margin-bottom: 15px;">
+          <div style="font-weight: bold; margin-bottom: 5px;">正义阵营:</div>
+          <p style="margin-bottom: 10px; line-height: 1.5;">- <strong>梅林</strong>: 知道所有邪恶角色（除莫德雷德外），但必须隐藏身份</p>
+          <p style="margin-bottom: 10px; line-height: 1.5;">- <strong>派西维尔</strong>: 知道谁是梅林，但无法区分梅林和莫甘娜</p>
+          <p style="line-height: 1.5;">- <strong>忠臣</strong>: 不知道其他人的身份</p>
+        </div>
+        <div>
+          <div style="font-weight: bold; margin-bottom: 5px;">邪恶阵营:</div>
+          <p style="margin-bottom: 10px; line-height: 1.5;">- <strong>刺客</strong>: 可以在游戏结束时刺杀梅林</p>
+          <p style="margin-bottom: 10px; line-height: 1.5;">- <strong>莫德雷德</strong>: 对梅林隐身，梅林无法看到他</p>
+          <p style="margin-bottom: 10px; line-height: 1.5;">- <strong>莫甘娜</strong>: 对派西维尔伪装成梅林</p>
+          <p style="line-height: 1.5;">- <strong>奥伯伦</strong>: 对其他邪恶角色隐身，也不知道谁是邪恶角色</p>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <div class="nav-btn prev" onclick="showPage('home-page')">
+          返回
+        </div>
+      </div>
+    </div>
+
+    <!-- 游戏记录页面 -->
+    <div class="page" id="history-page">
+      <div class="header">
+        <h1 class="title">游戏记录</h1>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+          <div style="font-weight: bold;">2023-06-15 20:30</div>
+          <div style="color: #4e7fff;">正义阵营胜利</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+          <div>玩家数: 5人</div>
+          <div>任务结果: 3:2</div>
+        </div>
+        <div style="font-size: 14px; color: #aabbff;">你的角色: 梅林</div>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+          <div style="font-weight: bold;">2023-06-14 19:45</div>
+          <div style="color: #ff4e4e;">邪恶阵营胜利</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+          <div>玩家数: 7人</div>
+          <div>任务结果: 2:3</div>
+        </div>
+        <div style="font-size: 14px; color: #aabbff;">你的角色: 派西维尔</div>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+          <div style="font-weight: bold;">2023-06-12 21:15</div>
+          <div style="color: #ff4e4e;">邪恶阵营胜利</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+          <div>玩家数: 6人</div>
+          <div>任务结果: 3:2 (梅林被刺杀)</div>
+        </div>
+        <div style="font-size: 14px; color: #aabbff;">你的角色: 莫甘娜</div>
+      </div>
+
+      <div class="nav-buttons">
+        <div class="nav-btn prev" onclick="showPage('home-page')">
+          返回
+        </div>
+      </div>
+    </div>
+
+    <!-- 角色分配页面 -->
+    <div class="page" id="role-page">
+      <div class="header">
+        <h1 class="title">角色分配</h1>
+        <p class="subtitle"> <!-- 角色分配页面 -->
+        <div class="page" id="role-page">
+          <div class="header">
+            <h1 class="title">角色分配</h1>
+            <p class="subtitle">玩家1</p>
+            <p class="progress-info">请确认是你本人后查看角色</p>
+          </div>
+
+          <div class="role-card">
+            <div class="role-card-icon">🔗</div>
+            <div class="role-card-name">梅林</div>
+            <div class="role-card-type">正义阵营</div>
+            <div class="role-card-desc">
+              你能看到所有邪恶阵营的人（除了莫德雷德）
+            </div>
+          </div>
+
+          <div class="nav-buttons">
+            <div class="nav-btn prev" onclick="showPage('room-page')">
+              上一位
+            </div>
+            <div class="nav-btn next" onclick="showPage('evil-role-page')">
+              下一位 ›
+            </div>
+          </div>
+        </div>
+
+        <!-- 邪恶角色展示页面 -->
+        <div class="page" id="evil-role-page">
+          <div class="header">
+            <h1 class="title">角色分配</h1>
+            <p class="subtitle">玩家4</p>
+            <p class="progress-info">请确认是你本人后查看角色</p>
+          </div>
+
+          <div class="role-card evil">
+            <div class="role-card-icon">🔗</div>
+            <div class="role-card-name">莫甘娜</div>
+            <div class="role-card-type">邪恶阵营</div>
+            <div class="role-card-desc">
+              你知道其他邪恶阵营的人（除了奥伯伦）
+            </div>
+          </div>
+
+          <div class="nav-buttons">
+            <div class="nav-btn prev" onclick="showPage('role-page')">
+              上一位
+            </div>
+            <div class="nav-btn next" onclick="showPage('game-page')">
+              下一位 ›
+            </div>
+          </div>
+        </div>
+
+        <!-- 添加JavaScript功能 -->
+        <script>
+          // 页面切换函数
+          function showPage(pageId) {
+            // 隐藏所有页面
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+              page.classList.remove('active');
+            });
+
+            // 显示指定页面
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+              targetPage.classList.add('active');
+            }
+          }
+
+          // 更新玩家数量显示
+          function updatePlayerCount(value) {
+            document.getElementById('player-count-value').textContent = value + '人';
+          }
+
+          // 切换玩家选择状态
+          function toggleSelection(element) {
+            element.classList.toggle('selected');
+          }
+
+          // 切换准备状态
+          function toggleReady(element) {
+            if (element.textContent.trim() === '准备') {
+              element.textContent = '取消准备';
+              element.style.backgroundColor = '#4e7fff';
+            } else {
+              element.textContent = '准备';
+              element.style.backgroundColor = '#ffd700';
+            }
+          }
+
+          // 初始化页面
+          document.addEventListener('DOMContentLoaded', function () {
+            // 默认显示主页
+            showPage('home-page');
+
+            // 初始化玩家数量滑块
+            const slider = document.getElementById('player-count-slider');
+            if (slider) {
+              updatePlayerCount(slider.value);
+            }
+          });
+        </script>
+      </div>
+</body>
+
+</html>
